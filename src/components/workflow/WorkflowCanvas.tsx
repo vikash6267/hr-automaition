@@ -16,7 +16,8 @@ import ReactFlow, {
 import 'reactflow/dist/style.css';
 
 import { nodeTypes } from '../nodes';
-import { useWorkflowStore } from '../../store/workflowStore';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { setNodes, setEdges, addNode, selectNode } from '../../store/workflowSlice';
 import type { WorkflowNodeData, NodeType } from '../../types/workflow.types';
 
 let nodeId = 0;
@@ -26,12 +27,14 @@ export const WorkflowCanvas: React.FC = () => {
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
   const [reactFlowInstance, setReactFlowInstance] = React.useState<any>(null);
 
-  const { nodes, edges, setNodes, setEdges, addNode, selectNode } = useWorkflowStore();
+  const dispatch = useAppDispatch();
+  const nodes = useAppSelector((state) => state.workflow.nodes);
+  const edges = useAppSelector((state) => state.workflow.edges);
 
   const [localNodes, setLocalNodes, onNodesChange] = useNodesState(nodes);
   const [localEdges, setLocalEdges, onEdgesChange] = useEdgesState(edges);
 
-  // Sync local state with store
+  // Sync local state with Redux store
   React.useEffect(() => {
     setLocalNodes(nodes);
   }, [nodes, setLocalNodes]);
@@ -40,14 +43,14 @@ export const WorkflowCanvas: React.FC = () => {
     setLocalEdges(edges);
   }, [edges, setLocalEdges]);
 
-  // Sync store with local state
+  // Sync Redux store with local state
   React.useEffect(() => {
-    setNodes(localNodes);
-  }, [localNodes, setNodes]);
+    dispatch(setNodes(localNodes));
+  }, [localNodes, dispatch]);
 
   React.useEffect(() => {
-    setEdges(localEdges);
-  }, [localEdges, setEdges]);
+    dispatch(setEdges(localEdges));
+  }, [localEdges, dispatch]);
 
   const onConnect: OnConnect = useCallback(
     (connection: Connection) => {
@@ -90,21 +93,21 @@ export const WorkflowCanvas: React.FC = () => {
         data: createDefaultNodeData(type),
       };
 
-      addNode(newNode);
+      dispatch(addNode(newNode));
     },
     [reactFlowInstance, addNode]
   );
 
   const onNodeClick = useCallback(
     (_event: React.MouseEvent, node: Node) => {
-      selectNode(node.id);
+      dispatch(selectNode(node.id));
     },
-    [selectNode]
+    [dispatch]
   );
 
   const onPaneClick = useCallback(() => {
-    selectNode(null);
-  }, [selectNode]);
+    dispatch(selectNode(null));
+  }, [dispatch]);
 
   return (
     <div ref={reactFlowWrapper} className="w-full h-full">

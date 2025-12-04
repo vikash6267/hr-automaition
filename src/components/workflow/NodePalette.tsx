@@ -1,6 +1,7 @@
 import React from 'react';
 import { Play, CheckSquare, UserCheck, Zap, Flag, Plus } from 'lucide-react';
-import { useWorkflowStore } from '../../store/workflowStore';
+import { useAppDispatch } from '../../store/hooks';
+import { addNode } from '../../store/workflowSlice';
 import type { NodeType, WorkflowNodeData } from '../../types/workflow.types';
 import type { Node } from 'reactflow';
 
@@ -55,7 +56,7 @@ const getId = () => `node_${nodeId++}`;
 
 export const NodePalette: React.FC = () => {
   const [isOpen, setIsOpen] = React.useState(true);
-  const { addNode } = useWorkflowStore();
+  const dispatch = useAppDispatch();
 
   const onDragStart = (event: React.DragEvent, nodeType: NodeType) => {
     event.dataTransfer.setData('application/reactflow', nodeType);
@@ -92,7 +93,7 @@ export const NodePalette: React.FC = () => {
       position: { x: 250, y: 100 + Math.random() * 200 },
       data: createDefaultNodeData(nodeType),
     };
-    addNode(newNode);
+    dispatch(addNode(newNode));
     setIsOpen(false); // Close sidebar on mobile after adding
   };
 

@@ -1,5 +1,6 @@
 import React from 'react';
-import { useWorkflowStore } from '../../store/workflowStore';
+import { useAppDispatch } from '../../store/hooks';
+import { updateNode } from '../../store/workflowSlice';
 import type { EndNodeData } from '../../types/workflow.types';
 
 interface EndNodeFormProps {
@@ -8,15 +9,15 @@ interface EndNodeFormProps {
 }
 
 export const EndNodeForm: React.FC<EndNodeFormProps> = ({ nodeId, data }) => {
-  const { updateNode } = useWorkflowStore();
+  const dispatch = useAppDispatch();
 
   const handleChange = (field: keyof EndNodeData, value: any) => {
-    updateNode(nodeId, { [field]: value });
+    dispatch(updateNode({ nodeId, data: { [field]: value } }));
   };
 
   const handleNotifyUsersChange = (value: string) => {
-    const users = value.split(',').map(u => u.trim()).filter(u => u);
-    updateNode(nodeId, { notifyUsers: users });
+    const users = value.split(',').map((u) => u.trim()).filter((u) => u);
+    dispatch(updateNode({ nodeId, data: { notifyUsers: users } }));
   };
 
   return (

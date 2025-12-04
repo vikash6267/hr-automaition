@@ -1,5 +1,6 @@
 import React from 'react';
-import { useWorkflowStore } from '../../store/workflowStore';
+import { useAppDispatch } from '../../store/hooks';
+import { updateNode } from '../../store/workflowSlice';
 import type { ApprovalNodeData } from '../../types/workflow.types';
 
 interface ApprovalNodeFormProps {
@@ -8,10 +9,10 @@ interface ApprovalNodeFormProps {
 }
 
 export const ApprovalNodeForm: React.FC<ApprovalNodeFormProps> = ({ nodeId, data }) => {
-  const { updateNode } = useWorkflowStore();
+  const dispatch = useAppDispatch();
 
   const handleChange = (field: keyof ApprovalNodeData, value: any) => {
-    updateNode(nodeId, { [field]: value });
+    dispatch(updateNode({ nodeId, data: { [field]: value } }));
   };
 
   return (

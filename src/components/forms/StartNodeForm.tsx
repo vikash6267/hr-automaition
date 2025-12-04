@@ -1,5 +1,6 @@
 import React from 'react';
-import { useWorkflowStore } from '../../store/workflowStore';
+import { useAppDispatch } from '../../store/hooks';
+import { updateNode } from '../../store/workflowSlice';
 import type { StartNodeData } from '../../types/workflow.types';
 
 interface StartNodeFormProps {
@@ -8,15 +9,15 @@ interface StartNodeFormProps {
 }
 
 export const StartNodeForm: React.FC<StartNodeFormProps> = ({ nodeId, data }) => {
-  const { updateNode } = useWorkflowStore();
+  const dispatch = useAppDispatch();
 
   const handleChange = (field: keyof StartNodeData, value: any) => {
-    updateNode(nodeId, { [field]: value });
+    dispatch(updateNode({ nodeId, data: { [field]: value } }));
   };
 
   const handleMetadataChange = (key: string, value: string) => {
     const newMetadata = { ...data.metadata, [key]: value };
-    updateNode(nodeId, { metadata: newMetadata });
+    dispatch(updateNode({ nodeId, data: { metadata: newMetadata } }));
   };
 
   const addMetadataField = () => {
@@ -27,7 +28,7 @@ export const StartNodeForm: React.FC<StartNodeFormProps> = ({ nodeId, data }) =>
   const removeMetadataField = (key: string) => {
     const newMetadata = { ...data.metadata };
     delete newMetadata[key];
-    updateNode(nodeId, { metadata: newMetadata });
+    dispatch(updateNode({ nodeId, data: { metadata: newMetadata } }));
   };
 
   return (
@@ -86,7 +87,7 @@ export const StartNodeForm: React.FC<StartNodeFormProps> = ({ nodeId, data }) =>
                   const newMetadata = { ...data.metadata };
                   delete newMetadata[key];
                   newMetadata[newKey] = value;
-                  updateNode(nodeId, { metadata: newMetadata });
+                  dispatch(updateNode({ nodeId, data: { metadata: newMetadata } }));
                 }}
                 className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm"
                 placeholder="Key"

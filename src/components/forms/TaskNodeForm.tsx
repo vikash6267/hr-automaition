@@ -1,5 +1,6 @@
 import React from 'react';
-import { useWorkflowStore } from '../../store/workflowStore';
+import { useAppDispatch } from '../../store/hooks';
+import { updateNode } from '../../store/workflowSlice';
 import type { TaskNodeData } from '../../types/workflow.types';
 
 interface TaskNodeFormProps {
@@ -8,15 +9,15 @@ interface TaskNodeFormProps {
 }
 
 export const TaskNodeForm: React.FC<TaskNodeFormProps> = ({ nodeId, data }) => {
-  const { updateNode } = useWorkflowStore();
+  const dispatch = useAppDispatch();
 
   const handleChange = (field: keyof TaskNodeData, value: any) => {
-    updateNode(nodeId, { [field]: value });
+    dispatch(updateNode({ nodeId, data: { [field]: value } }));
   };
 
   const handleCustomFieldChange = (key: string, value: string) => {
     const newCustomFields = { ...data.customFields, [key]: value };
-    updateNode(nodeId, { customFields: newCustomFields });
+    dispatch(updateNode({ nodeId, data: { customFields: newCustomFields } }));
   };
 
   const addCustomField = () => {
@@ -27,7 +28,7 @@ export const TaskNodeForm: React.FC<TaskNodeFormProps> = ({ nodeId, data }) => {
   const removeCustomField = (key: string) => {
     const newCustomFields = { ...data.customFields };
     delete newCustomFields[key];
-    updateNode(nodeId, { customFields: newCustomFields });
+    dispatch(updateNode({ nodeId, data: { customFields: newCustomFields } }));
   };
 
   return (
@@ -122,7 +123,7 @@ export const TaskNodeForm: React.FC<TaskNodeFormProps> = ({ nodeId, data }) => {
                   const newCustomFields = { ...data.customFields };
                   delete newCustomFields[key];
                   newCustomFields[newKey] = value;
-                  updateNode(nodeId, { customFields: newCustomFields });
+                  dispatch(updateNode({ nodeId, data: { customFields: newCustomFields } }));
                 }}
                 className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm"
                 placeholder="Field name"

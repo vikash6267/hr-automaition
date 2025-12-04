@@ -1,6 +1,7 @@
 import React from 'react';
 import { X } from 'lucide-react';
-import { useWorkflowStore } from '../../store/workflowStore';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { selectNode, deleteNode } from '../../store/workflowSlice';
 import { StartNodeForm } from '../forms/StartNodeForm';
 import { TaskNodeForm } from '../forms/TaskNodeForm';
 import { ApprovalNodeForm } from '../forms/ApprovalNodeForm';
@@ -8,7 +9,10 @@ import { AutomatedNodeForm } from '../forms/AutomatedNodeForm';
 import { EndNodeForm } from '../forms/EndNodeForm';
 
 export const ConfigPanel: React.FC = () => {
-  const { selectedNodeId, nodes, isPanelOpen, selectNode, deleteNode } = useWorkflowStore();
+  const dispatch = useAppDispatch();
+  const selectedNodeId = useAppSelector((state) => state.workflow.selectedNodeId);
+  const nodes = useAppSelector((state) => state.workflow.nodes);
+  const isPanelOpen = useAppSelector((state) => state.workflow.isPanelOpen);
 
   const selectedNode = nodes.find((n) => n.id === selectedNodeId);
 
@@ -17,12 +21,12 @@ export const ConfigPanel: React.FC = () => {
   }
 
   const handleClose = () => {
-    selectNode(null);
+    dispatch(selectNode(null));
   };
 
   const handleDelete = () => {
     if (selectedNodeId) {
-      deleteNode(selectedNodeId);
+      dispatch(deleteNode(selectedNodeId));
     }
   };
 

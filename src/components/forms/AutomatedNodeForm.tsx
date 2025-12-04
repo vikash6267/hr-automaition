@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { useWorkflowStore } from '../../store/workflowStore';
+import { useAppDispatch } from '../../store/hooks';
+import { updateNode } from '../../store/workflowSlice';
 import { mockApi } from '../../services/mockApi';
 import type { AutomatedNodeData } from '../../types/workflow.types';
 import type { AutomationAction } from '../../types/api.types';
@@ -10,7 +11,7 @@ interface AutomatedNodeFormProps {
 }
 
 export const AutomatedNodeForm: React.FC<AutomatedNodeFormProps> = ({ nodeId, data }) => {
-  const { updateNode } = useWorkflowStore();
+  const dispatch = useAppDispatch();
   const [automations, setAutomations] = useState<AutomationAction[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedAction, setSelectedAction] = useState<AutomationAction | null>(null);
@@ -38,24 +39,29 @@ export const AutomatedNodeForm: React.FC<AutomatedNodeFormProps> = ({ nodeId, da
   };
 
   const handleChange = (field: keyof AutomatedNodeData, value: any) => {
-    updateNode(nodeId, { [field]: value });
+    dispatch(updateNode({ nodeId, data: { [field]: value } }));
   };
 
   const handleActionChange = (actionId: string) => {
-    const action = automations.find(a => a.id === actionId);
+    const action = automations.find((a) => a.id === actionId);
     if (action) {
-      updateNode(nodeId, {
-        actionId: action.id,
-        actionLabel: action.label,
-        parameters: {},
-      });
+      dispatch(
+        updateNode({
+          nodeId,
+          data: {
+            actionId: action.id,
+            actionLabel: action.label,
+            parameters: {},
+          },
+        })
+      );
       setSelectedAction(action);
     }
   };
 
   const handleParameterChange = (paramName: string, value: any) => {
     const newParameters = { ...data.parameters, [paramName]: value };
-    updateNode(nodeId, { parameters: newParameters });
+    dispatch(updateNode({ nodeId, data: { parameters: newParameters } }));
   };
 
   return (

@@ -1,27 +1,28 @@
 import React, { useState } from 'react';
 import { Save, FolderOpen, CheckCircle, Play, Download, Trash2 } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { useWorkflowStore } from '../../store/workflowStore';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import {
+  setWorkflowName,
+  setValidationResult,
+  setSimulationState,
+  clearWorkflow,
+} from '../../store/workflowSlice';
 import { validateWorkflow } from '../../utils/workflowValidator';
 import { mockApi } from '../../services/mockApi';
 
 export const WorkflowToolbar: React.FC = () => {
-  const {
-    nodes,
-    edges,
-    workflowName,
-    workflowDescription,
-    setWorkflowName,
-    setValidationResult,
-    setSimulationState,
-    clearWorkflow,
-  } = useWorkflowStore();
+  const dispatch = useAppDispatch();
+  const nodes = useAppSelector((state) => state.workflow.nodes);
+  const edges = useAppSelector((state) => state.workflow.edges);
+  const workflowName = useAppSelector((state) => state.workflow.workflowName);
+  const workflowDescription = useAppSelector((state) => state.workflow.workflowDescription);
 
   const [isSimulating, setIsSimulating] = useState(false);
 
   const handleValidate = () => {
     const result = validateWorkflow(nodes, edges);
-    setValidationResult(result);
+    dispatch(setValidationResult(result));
     
     if (result.isValid) {
       if (result.warnings.length > 0) {
@@ -81,7 +82,7 @@ export const WorkflowToolbar: React.FC = () => {
   const handleSimulate = async () => {
     // First validate
     const validationResult = validateWorkflow(nodes, edges);
-    setValidationResult(validationResult);
+    dispatch(setValidationResult(validationResult));
 
     if (!validationResult.isValid) {
       toast.error(
@@ -100,13 +101,15 @@ export const WorkflowToolbar: React.FC = () => {
     }
 
     setIsSimulating(true);
-    setSimulationState({
-      status: 'running',
-      completedNodes: [],
-      results: [],
-      errors: [],
-      progress: 0,
-    });
+    dispatch(
+      setSimulationState({
+        status: 'running',
+        completedNodes: [],
+        results: [],
+        errors: [],
+        progress: 0,
+      })
+    );
 
     const loadingToast = toast.loading('🔄 Simulating workflow... Please wait');
 
@@ -115,20 +118,22 @@ export const WorkflowToolbar: React.FC = () => {
         workflow: { nodes, edges },
       });
 
-      setSimulationState({
-        status: response.success ? 'completed' : 'failed',
-        completedNodes: response.steps.map(s => s.nodeId),
-        results: response.steps.map(s => ({
-          nodeId: s.nodeId,
-          success: s.status === 'completed',
-          output: s.output,
-          error: s.error,
-          duration: s.duration || 0,
-          logs: s.logs,
-        })),
-        errors: response.errors,
-        progress: 100,
-      });
+      dispatch(
+        setSimulationState({
+          status: response.success ? 'completed' : 'failed',
+          completedNodes: response.steps.map((s) => s.nodeId),
+          results: response.steps.map((s) => ({
+            nodeId: s.nodeId,
+            success: s.status === 'completed',
+            output: s.output,
+            error: s.error,
+            duration: s.duration || 0,
+            logs: s.logs,
+          })),
+          errors: response.errors,
+          progress: 100,
+        })
+      );
 
       toast.dismiss(loadingToast);
 
@@ -162,13 +167,15 @@ export const WorkflowToolbar: React.FC = () => {
       }
     } catch (error) {
       toast.dismiss(loadingToast);
-      setSimulationState({
-        status: 'failed',
-        completedNodes: [],
-        results: [],
-        errors: ['Simulation failed: ' + (error as Error).message],
-        progress: 0,
-      });
+      dispatch(
+        setSimulationState({
+          status: 'failed',
+          completedNodes: [],
+          results: [],
+          errors: ['Simulation failed: ' + (error as Error).message],
+          progress: 0,
+        })
+      );
       toast.error(
         <div className="max-w-md">
           <div className="flex items-start justify-between gap-2">
@@ -292,7 +299,7 @@ export const WorkflowToolbar: React.FC = () => {
     }
 
     if (confirm(`⚠️ Warning: The entire workflow will be deleted!\n\n${nodes.length} nodes and ${edges.length} connections will be removed.\n\nAre you sure?`)) {
-      clearWorkflow();
+      dispatch(clearWorkflow());
       toast.success(
         <div className="flex items-center justify-between gap-2">
           <span className="text-sm">🗑️ Cleared ({nodes.length} nodes)</span>
@@ -311,7 +318,7 @@ export const WorkflowToolbar: React.FC = () => {
           <input
             type="text"
             value={workflowName}
-            onChange={(e) => setWorkflowName(e.target.value)}
+            onChange={(e) => dispatch(setWorkflowName(e.target.value))}
             className="text-base sm:text-lg font-semibold border-b-2 border-transparent hover:border-gray-300 focus:border-blue-500 focus:outline-none px-2 py-1 w-full sm:w-auto"
             placeholder="Workflow Name"
           />
