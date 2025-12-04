@@ -95,7 +95,7 @@ export const WorkflowCanvas: React.FC = () => {
 
       dispatch(addNode(newNode));
     },
-    [reactFlowInstance, addNode]
+    [reactFlowInstance, dispatch]
   );
 
   const onNodeClick = useCallback(

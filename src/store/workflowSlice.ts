@@ -3,10 +3,19 @@ import type { Node, Edge } from 'reactflow';
 import type { WorkflowNodeData, ValidationResult } from '../types/workflow.types';
 import type { SimulationState } from '../types/simulation.types';
 
+interface HistoryState {
+  nodes: Node<WorkflowNodeData>[];
+  edges: Edge[];
+}
+
 interface WorkflowState {
   // Workflow data
   nodes: Node<WorkflowNodeData>[];
   edges: Edge[];
+  
+  // History for undo/redo
+  history: HistoryState[];
+  historyIndex: number;
   
   // UI state
   selectedNodeId: string | null;
@@ -34,12 +43,35 @@ const initialSimulationState: SimulationState = {
 const initialState: WorkflowState = {
   nodes: [],
   edges: [],
+  history: [],
+  historyIndex: -1,
   selectedNodeId: null,
   isPanelOpen: false,
   workflowName: 'Untitled Workflow',
   workflowDescription: '',
   validationResult: null,
   simulationState: initialSimulationState,
+};
+
+// Helper to save history
+const saveHistory = (state: WorkflowState) => {
+  // Remove any future history if we're not at the end
+  if (state.historyIndex < state.history.length - 1) {
+    state.history = state.history.slice(0, state.historyIndex + 1);
+  }
+  
+  // Add current state to history
+  state.history.push({
+    nodes: JSON.parse(JSON.stringify(state.nodes)),
+    edges: JSON.parse(JSON.stringify(state.edges)),
+  });
+  
+  // Limit history to 50 states
+  if (state.history.length > 50) {
+    state.history.shift();
+  } else {
+    state.historyIndex++;
+  }
 };
 
 const workflowSlice = createSlice({
@@ -56,6 +88,7 @@ const workflowSlice = createSlice({
     },
     
     addNode: (state, action: PayloadAction<Node<WorkflowNodeData>>) => {
+      saveHistory(state);
       state.nodes.push(action.payload);
     },
     
@@ -68,6 +101,7 @@ const workflowSlice = createSlice({
     },
     
     deleteNode: (state, action: PayloadAction<string>) => {
+      saveHistory(state);
       const nodeId = action.payload;
       state.nodes = state.nodes.filter((node) => node.id !== nodeId);
       state.edges = state.edges.filter(
@@ -84,6 +118,27 @@ const workflowSlice = createSlice({
     
     deleteEdge: (state, action: PayloadAction<string>) => {
       state.edges = state.edges.filter((edge) => edge.id !== action.payload);
+    },
+    
+    // Undo/Redo actions
+    undo: (state) => {
+      if (state.historyIndex > 0) {
+        state.historyIndex--;
+        const previousState = state.history[state.historyIndex];
+        state.nodes = JSON.parse(JSON.stringify(previousState.nodes));
+        state.edges = JSON.parse(JSON.stringify(previousState.edges));
+        state.selectedNodeId = null;
+      }
+    },
+    
+    redo: (state) => {
+      if (state.historyIndex < state.history.length - 1) {
+        state.historyIndex++;
+        const nextState = state.history[state.historyIndex];
+        state.nodes = JSON.parse(JSON.stringify(nextState.nodes));
+        state.edges = JSON.parse(JSON.stringify(nextState.edges));
+        state.selectedNodeId = null;
+      }
     },
 
     // UI actions
@@ -117,6 +172,7 @@ const workflowSlice = createSlice({
 
     // Utility actions
     clearWorkflow: (state) => {
+      saveHistory(state);
       state.nodes = [];
       state.edges = [];
       state.selectedNodeId = null;
@@ -155,6 +211,8 @@ export const {
   deleteNode,
   addEdge,
   deleteEdge,
+  undo,
+  redo,
   selectNode,
   togglePanel,
   setWorkflowName,

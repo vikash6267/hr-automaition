@@ -56,7 +56,20 @@ const getId = () => `node_${nodeId++}`;
 
 export const NodePalette: React.FC = () => {
   const [isOpen, setIsOpen] = React.useState(true);
+  const [focusedNodeType, setFocusedNodeType] = React.useState<NodeType | null>(null);
   const dispatch = useAppDispatch();
+
+  // Handle Enter key to add focused node
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Enter' && focusedNodeType) {
+        handleAddNode(focusedNodeType);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [focusedNodeType]);
 
   const onDragStart = (event: React.DragEvent, nodeType: NodeType) => {
     event.dataTransfer.setData('application/reactflow', nodeType);
@@ -148,11 +161,22 @@ export const NodePalette: React.FC = () => {
           const Icon = item.icon;
           return (
             <div key={item.type} className="relative group">
-              {/* Desktop: Draggable */}
+              {/* Desktop: Draggable + Double-click + Enter */}
               <div
                 draggable
+                tabIndex={0}
                 onDragStart={(e) => onDragStart(e, item.type)}
-                className="hidden lg:block cursor-move bg-white border-2 border-gray-200 rounded-lg p-3 hover:border-blue-400 hover:shadow-md transition-all"
+                onDoubleClick={() => handleAddNode(item.type)}
+                onFocus={() => setFocusedNodeType(item.type)}
+                onBlur={() => setFocusedNodeType(null)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleAddNode(item.type);
+                  }
+                }}
+                className="hidden lg:block cursor-move bg-white border-2 border-gray-200 rounded-lg p-3 hover:border-blue-400 hover:shadow-md transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none"
+                title="Drag, double-click, or press Enter to add"
               >
                 <div className="flex items-center gap-3">
                   <div className={`w-10 h-10 bg-gradient-to-r ${item.color} rounded-lg flex items-center justify-center flex-shrink-0`}>
@@ -192,8 +216,14 @@ export const NodePalette: React.FC = () => {
         <div className="mt-6 p-3 bg-blue-50 rounded-lg border border-blue-200">
           <p className="text-xs text-blue-800">
             <strong className="hidden lg:inline">Tip:</strong>
-            <span className="hidden lg:inline"> Drag and drop nodes onto the canvas</span>
+            <span className="hidden lg:inline"> Drag, double-click, or press Enter to add nodes</span>
             <span className="lg:hidden">Tap the + button to add nodes to canvas</span>
+          </p>
+        </div>
+
+        <div className="mt-3 p-3 bg-purple-50 rounded-lg border border-purple-200">
+          <p className="text-xs text-purple-800">
+            <strong>Shortcuts:</strong> Press <kbd className="px-1.5 py-0.5 bg-white border border-purple-300 rounded text-xs">Ctrl+K</kbd> to view all
           </p>
         </div>
       </div>
