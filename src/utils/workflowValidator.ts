@@ -36,20 +36,20 @@ export class WorkflowValidator {
     if (startNodes.length === 0) {
       this.errors.push({
         type: 'error',
-        message: '🟢 Start Node Missing: Har workflow ko ek Start node chahiye. Left panel se green "Start" node drag karein.',
+        message: '🟢 Start Node Missing: Every workflow must have exactly one Start node. Drag the green "Start" node from the left panel.',
         code: 'NO_START_NODE',
       });
     } else if (startNodes.length > 1) {
       this.errors.push({
         type: 'error',
-        message: `🟢 Multiple Start Nodes: Aapke workflow mein ${startNodes.length} Start nodes hain. Sirf ek Start node hona chahiye.`,
+        message: `🟢 Multiple Start Nodes: Your workflow has ${startNodes.length} Start nodes. Only one Start node is allowed.`,
         code: 'MULTIPLE_START_NODES',
       });
       startNodes.slice(1).forEach((node, index) => {
         this.errors.push({
           type: 'error',
           nodeId: node.id,
-          message: `🟢 Extra Start Node "${node.data.label}": Ise delete karein. Canvas pe click karke Delete button dabayein.`,
+          message: `🟢 Extra Start Node "${node.data.label}": Please delete this node. Click on it and press the Delete button.`,
           code: 'DUPLICATE_START_NODE',
         });
       });
@@ -67,7 +67,7 @@ export class WorkflowValidator {
         this.errors.push({
           type: 'error',
           nodeId: startNode.id,
-          message: `🟢 Start Node "${startNode.data.label}": Isme incoming connection nahi ho sakta. "${sourceNodes}" se connection remove karein.`,
+          message: `🟢 Start Node "${startNode.data.label}": Cannot have incoming connections. Remove connection from "${sourceNodes}".`,
           code: 'START_NODE_HAS_INCOMING',
         });
       }
@@ -78,7 +78,7 @@ export class WorkflowValidator {
         this.warnings.push({
           type: 'warning',
           nodeId: startNode.id,
-          message: `⚠️ Start Node "${startNode.data.label}": Isko kisi node se connect karein. Neeche wale dot se drag karke dusre node ke upar wale dot tak le jayein.`,
+          message: `⚠️ Start Node "${startNode.data.label}": Has no outgoing connections. Connect it to another node.`,
           code: 'START_NODE_NO_OUTGOING',
         });
       }
@@ -91,7 +91,7 @@ export class WorkflowValidator {
     if (endNodes.length === 0) {
       this.errors.push({
         type: 'error',
-        message: '🔴 End Node Missing: Har workflow ko kam se kam ek End node chahiye. Left panel se red "End" node drag karein.',
+        message: '🔴 End Node Missing: Every workflow must have at least one End node. Drag the red "End" node from the left panel.',
         code: 'NO_END_NODE',
       });
     } else {
@@ -108,7 +108,7 @@ export class WorkflowValidator {
           this.errors.push({
             type: 'error',
             nodeId: endNode.id,
-            message: `🔴 End Node "${endNode.data.label}": Isme outgoing connection nahi ho sakta. "${targetNodes}" ke saath connection remove karein. End node workflow ka last step hota hai.`,
+            message: `🔴 End Node "${endNode.data.label}": Cannot have outgoing connections. Remove connection to "${targetNodes}". End node must be the final step.`,
             code: 'END_NODE_HAS_OUTGOING',
           });
         }
@@ -119,7 +119,7 @@ export class WorkflowValidator {
           this.warnings.push({
             type: 'warning',
             nodeId: endNode.id,
-            message: `⚠️ End Node "${endNode.data.label}": Isko kisi node se connect karein. Kisi bhi node ke neeche wale dot se drag karke is End node ke upar wale dot tak le jayein.`,
+            message: `⚠️ End Node "${endNode.data.label}": Has no incoming connections. Connect it from a previous node.`,
             code: 'END_NODE_NO_INCOMING',
           });
         }
@@ -146,7 +146,7 @@ export class WorkflowValidator {
         this.warnings.push({
           type: 'warning',
           nodeId: node.id,
-          message: `⚠️ ${nodeTypeEmoji} "${node.data.label}": Isme incoming connection nahi hai. Kisi previous node se isko connect karein (upar wale dot pe).`,
+          message: `⚠️ ${nodeTypeEmoji} "${node.data.label}": Has no incoming connections. Connect it from a previous node.`,
           code: 'NODE_NO_INCOMING',
         });
       }
@@ -155,7 +155,7 @@ export class WorkflowValidator {
         this.warnings.push({
           type: 'warning',
           nodeId: node.id,
-          message: `⚠️ ${nodeTypeEmoji} "${node.data.label}": Isme outgoing connection nahi hai. Isko kisi next node se connect karein (neeche wale dot se).`,
+          message: `⚠️ ${nodeTypeEmoji} "${node.data.label}": Has no outgoing connections. Connect it to a next node.`,
           code: 'NODE_NO_OUTGOING',
         });
       }
@@ -194,7 +194,7 @@ export class WorkflowValidator {
         this.errors.push({
           type: 'error',
           nodeId: node.id,
-          message: `❌ ${nodeTypeEmoji} "${node.data.label}": Ye node Start node se connected nahi hai. Isko main workflow se connect karein ya delete kar dein.`,
+          message: `❌ ${nodeTypeEmoji} "${node.data.label}": This node is not connected to the Start node. Connect it to the main workflow or delete it.`,
           code: 'ORPHANED_NODE',
         });
       }
@@ -238,7 +238,7 @@ export class WorkflowValidator {
 
           this.errors.push({
             type: 'error',
-            message: `🔄 Circular Loop Detected: Workflow mein infinite loop hai. Ye nodes ek circle bana rahe hain: ${cycleNodeNames}. Ek connection remove karein taaki loop break ho jaye.`,
+            message: `🔄 Circular Loop Detected: Your workflow contains an infinite loop. These nodes form a circle: ${cycleNodeNames}. Remove one connection to break the loop.`,
             code: 'CIRCULAR_DEPENDENCY',
           });
           break;
@@ -264,7 +264,7 @@ export class WorkflowValidator {
         this.errors.push({
           type: 'error',
           nodeId: node.id,
-          message: `❌ ${nodeTypeEmoji} Node: Title missing hai. Node pe click karke right panel mein title enter karein.`,
+          message: `❌ ${nodeTypeEmoji} Node: Title is missing. Click the node and enter a title in the right panel.`,
           code: 'MISSING_LABEL',
         });
       }
@@ -276,7 +276,7 @@ export class WorkflowValidator {
             this.warnings.push({
               type: 'warning',
               nodeId: node.id,
-              message: `⚠️ 🔵 Task "${data.label}": Assignee missing hai. Kis ko ye task assign karna hai? Node pe click karke "Assignee" field mein email address enter karein.`,
+              message: `⚠️ 🔵 Task "${data.label}": Assignee is missing. Click the node and enter an email address in the "Assignee" field.`,
               code: 'TASK_NO_ASSIGNEE',
             });
           }
@@ -287,7 +287,7 @@ export class WorkflowValidator {
             this.errors.push({
               type: 'error',
               nodeId: node.id,
-              message: `❌ 🟠 Approval "${data.label}": Approver Role missing hai. Kaun approve karega? Node pe click karke "Approver Role" field mein role enter karein (e.g., "Manager", "HR Director").`,
+              message: `❌ 🟠 Approval "${data.label}": Approver Role is required. Click the node and enter a role (e.g., "Manager", "HR Director").`,
               code: 'APPROVAL_NO_ROLE',
             });
           }
@@ -298,7 +298,7 @@ export class WorkflowValidator {
             this.errors.push({
               type: 'error',
               nodeId: node.id,
-              message: `❌ 🟣 Automated "${data.label}": Action select nahi kiya gaya. Node pe click karke "Select Action" dropdown se koi action choose karein (e.g., "Send Email", "Generate Document").`,
+              message: `❌ 🟣 Automated "${data.label}": Action not selected. Click the node and choose an action from the dropdown (e.g., "Send Email", "Generate Document").`,
               code: 'AUTOMATED_NO_ACTION',
             });
           }
@@ -309,7 +309,7 @@ export class WorkflowValidator {
             this.warnings.push({
               type: 'warning',
               nodeId: node.id,
-              message: `⚠️ 🔴 End "${data.label}": Completion message missing hai. Workflow complete hone pe kya message dikhana hai? Node pe click karke "Completion Message" field mein message enter karein.`,
+              message: `⚠️ 🔴 End "${data.label}": Completion message is missing. Click the node and enter a message in the "Completion Message" field.`,
               code: 'END_NO_MESSAGE',
             });
           }

@@ -11,14 +11,16 @@ function App() {
     <div className="h-screen flex flex-col bg-gray-50">
       {/* Toast Notifications */}
       <Toaster
-        position="top-right"
+        position="top-center"
         toastOptions={{
           duration: 4000,
           style: {
             background: '#363636',
             color: '#fff',
-            padding: '16px',
+            padding: '12px 16px',
             borderRadius: '8px',
+            maxWidth: '500px',
+            fontSize: '14px',
           },
           success: {
             duration: 3000,
@@ -32,6 +34,9 @@ function App() {
             iconTheme: {
               primary: '#ef4444',
               secondary: '#fff',
+            },
+            style: {
+              maxWidth: '600px',
             },
           },
         }}
