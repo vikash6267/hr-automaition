@@ -1,5 +1,7 @@
 # HR Workflow Designer
 
+<a href="https://your-live-link-here.com" target="_blank"><img src="https://img.shields.io/badge/LIVE_DEMO-000?style=for-the-badge&logo=vercel&logoColor=white" /></a>
+
 A clean and concise prototype of an **HR Workflow Builder** built using **React, Redux Toolkit, React Flow**, and **TailwindCSS**. This tool allows HR teams to visually design workflows like onboarding, approvals, and automated steps.
 
 ![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
