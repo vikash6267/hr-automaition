@@ -2,13 +2,18 @@
 
 A clean and concise prototype of an **HR Workflow Builder** built using **React, Redux Toolkit, React Flow**, and **TailwindCSS**. This tool allows HR teams to visually design workflows like onboarding, approvals, and automated steps.
 
-[![My Skills](https://skillicons.dev/icons?i=aws,gcp,azure,react,vue,flutter&perline=3)](https://skillicons.dev)
+![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
+![Vite](https://img.shields.io/badge/vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+![Redux](https://img.shields.io/badge/redux-%23593d88.svg?style=for-the-badge&logo=redux&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![TypeScript](https://img.shields.io/badge/typescript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
+![Vercel](https://img.shields.io/badge/vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)([https://skillicons.dev)(https://skillicons.dev](https://skillicons.dev%29%28https://skillicons.dev))
 
 ---
 
 ## 🚀 Features
 
-- Drag-and-drop **workflow canvas** (React Flow)
+- Drag‑and‑drop **workflow canvas** (React Flow)
 - **Five node types:** Start, Task, Approval, Automated, End
 - **Node configuration panel** with editable forms
 - **Validation:** start/end requirements, no cycles, no orphan nodes
