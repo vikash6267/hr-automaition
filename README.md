@@ -286,7 +286,8 @@ Using TailwindCSS for utility-first styling:
 - **Animations**: Smooth transitions and hover effects
 - **Accessibility**: ARIA labels and keyboard navigation
 
-## 🚀 Deployment
+## 🚀 Deployment            
+
 
 ### Build for Production
 
