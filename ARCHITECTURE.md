@@ -306,12 +306,7 @@ App
 ---
 
 ## 🔮 Future Enhancements
-
-- Real-time collaboration (WebSocket)
-- Version control for workflows
-- Workflow templates library
-- Advanced analytics dashboard
-- Role-based access control
+ntrol
 - Workflow scheduling
 - Integration with external HR systems
 - AI-powered workflow suggestions

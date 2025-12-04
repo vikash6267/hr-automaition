@@ -7,7 +7,6 @@ import type {
   SimulationStep,
 } from '../types/api.types';
 
-// Mock automation actions database
 const MOCK_AUTOMATIONS: AutomationAction[] = [
   {
     id: 'send_email',
@@ -221,7 +220,6 @@ const MOCK_AUTOMATIONS: AutomationAction[] = [
   },
 ];
 
-// Simulate network delay
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 // Mock API implementation
