@@ -45,7 +45,7 @@ export class WorkflowValidator {
         message: `🟢 Multiple Start Nodes: Your workflow has ${startNodes.length} Start nodes. Only one Start node is allowed.`,
         code: 'MULTIPLE_START_NODES',
       });
-      startNodes.slice(1).forEach((node, index) => {
+      startNodes.slice(1).forEach((node) => {
         this.errors.push({
           type: 'error',
           nodeId: node.id,
@@ -140,7 +140,9 @@ export class WorkflowValidator {
         task: '🔵',
         approval: '🟠',
         automated: '🟣',
-      }[node.type] || '⚪';
+        start: '🟢',
+        end: '🔴',
+      }[node.type || 'task'] || '⚪';
 
       if (incomingEdges.length === 0) {
         this.warnings.push({
@@ -189,7 +191,7 @@ export class WorkflowValidator {
           approval: '🟠',
           automated: '🟣',
           end: '🔴',
-        }[node.type] || '⚪';
+        }[node.type || 'task'] || '⚪';
 
         this.errors.push({
           type: 'error',
@@ -257,7 +259,7 @@ export class WorkflowValidator {
         approval: '🟠',
         automated: '🟣',
         end: '🔴',
-      }[node.type] || '⚪';
+      }[node.type || 'task'] || '⚪';
 
       // Validate common fields
       if (!data.label || data.label.trim() === '') {
@@ -272,7 +274,7 @@ export class WorkflowValidator {
       // Type-specific validation
       switch (node.type) {
         case 'task':
-          if (!data.assignee || data.assignee.trim() === '') {
+          if ('assignee' in data && (!data.assignee || data.assignee.trim() === '')) {
             this.warnings.push({
               type: 'warning',
               nodeId: node.id,
@@ -283,7 +285,7 @@ export class WorkflowValidator {
           break;
 
         case 'approval':
-          if (!data.approverRole || data.approverRole.trim() === '') {
+          if ('approverRole' in data && (!data.approverRole || data.approverRole.trim() === '')) {
             this.errors.push({
               type: 'error',
               nodeId: node.id,
@@ -294,7 +296,7 @@ export class WorkflowValidator {
           break;
 
         case 'automated':
-          if (!data.actionId) {
+          if ('actionId' in data && !data.actionId) {
             this.errors.push({
               type: 'error',
               nodeId: node.id,
@@ -305,7 +307,7 @@ export class WorkflowValidator {
           break;
 
         case 'end':
-          if (!data.endMessage || data.endMessage.trim() === '') {
+          if ('endMessage' in data && (!data.endMessage || data.endMessage.trim() === '')) {
             this.warnings.push({
               type: 'warning',
               nodeId: node.id,

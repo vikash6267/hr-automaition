@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { addNode, deleteNode, selectNode, clearWorkflow } from '../store/workflowSlice';
-import { validateWorkflow } from '../utils/workflowValidator';
 import type { Node } from 'reactflow';
 import type { WorkflowNodeData, NodeType } from '../types/workflow.types';
 

@@ -96,7 +96,7 @@ const workflowSlice = createSlice({
       const { nodeId, data } = action.payload;
       const node = state.nodes.find((n) => n.id === nodeId);
       if (node) {
-        node.data = { ...node.data, ...data };
+        node.data = { ...node.data, ...data } as any;
       }
     },
     

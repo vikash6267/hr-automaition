@@ -33,15 +33,15 @@ export const ConfigPanel: React.FC = () => {
   const renderForm = () => {
     switch (selectedNode.type) {
       case 'start':
-        return <StartNodeForm nodeId={selectedNode.id} data={selectedNode.data} />;
+        return <StartNodeForm nodeId={selectedNode.id} data={selectedNode.data as any} />;
       case 'task':
-        return <TaskNodeForm nodeId={selectedNode.id} data={selectedNode.data} />;
+        return <TaskNodeForm nodeId={selectedNode.id} data={selectedNode.data as any} />;
       case 'approval':
-        return <ApprovalNodeForm nodeId={selectedNode.id} data={selectedNode.data} />;
+        return <ApprovalNodeForm nodeId={selectedNode.id} data={selectedNode.data as any} />;
       case 'automated':
-        return <AutomatedNodeForm nodeId={selectedNode.id} data={selectedNode.data} />;
+        return <AutomatedNodeForm nodeId={selectedNode.id} data={selectedNode.data as any} />;
       case 'end':
-        return <EndNodeForm nodeId={selectedNode.id} data={selectedNode.data} />;
+        return <EndNodeForm nodeId={selectedNode.id} data={selectedNode.data as any} />;
       default:
         return <div>Unknown node type</div>;
     }

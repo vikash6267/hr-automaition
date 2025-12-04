@@ -8,8 +8,6 @@ import ReactFlow, {
   addEdge,
   useNodesState,
   useEdgesState,
-  OnNodesChange,
-  OnEdgesChange,
   OnConnect,
   Node,
 } from 'reactflow';

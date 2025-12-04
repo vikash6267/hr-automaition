@@ -1,4 +1,3 @@
-import React from 'react';
 import { ReactFlowProvider } from 'reactflow';
 import { Toaster } from 'react-hot-toast';
 import { WorkflowToolbar } from './components/workflow/WorkflowToolbar';

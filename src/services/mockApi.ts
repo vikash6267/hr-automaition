@@ -294,7 +294,7 @@ export const mockApi = {
   },
 
   // POST /workflows
-  async saveWorkflow(request: SaveWorkflowRequest): Promise<SaveWorkflowResponse> {
+  async saveWorkflow(_request: SaveWorkflowRequest): Promise<SaveWorkflowResponse> {
     await delay(400);
     
     return {
